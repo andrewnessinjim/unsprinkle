@@ -1,37 +1,29 @@
 import React from "react";
 import styled from "styled-components/macro";
 
-const MIME_TYPES_EXTENSIONS = {
-  "image/avif": [
-    { extension: ".avif", xDescriptor: "" },
-    { extension: "@2x.avif", xDescriptor: "2x" },
-    { extension: "@3x.avif", xDescriptor: "3x" },
-  ],
-  "image/jpeg": [
-    { extension: ".jpg", xDescriptor: "" },
-    { extension: "@2x.jpg", xDescriptor: "2x" },
-    { extension: "@3x.jpg", xDescriptor: "3x" },
-  ],
-};
-
 const PhotoGridItem = ({ id, src, alt, tags }) => {
-  const srcExtensionRemoved = src.replace(".jpg", "");
-
   return (
     <article>
       <Anchor href={`/photos/${id}`}>
         <picture>
-          {Object.keys(MIME_TYPES_EXTENSIONS).map((mimeType) => {
-            const srcSetArray = [];
+          <source
+            type="image/avif"
+            srcSet={`
+            ${src.replace(".jpg", ".avif")} 1x,
+            ${src.replace(".jpg", "@2x.avif")} 2x,
+            ${src.replace(".jpg", "@3x.avif")} 3x
+            `}
+          />
 
-            for(const mimeExtension of MIME_TYPES_EXTENSIONS[mimeType]) {
-              srcSetArray.push(
-                `${srcExtensionRemoved+mimeExtension.extension} ${mimeExtension.xDescriptor}`
-              )
-            }
+          <source
+            type="image/jpg"
+            srcSet={`
+            ${src} 1x,
+            ${src.replace(".jpg", "@2x.jpg")} 2x,
+            ${src.replace(".jpg", "@3x.jpg")} 3x
+            `}
+          />
 
-            return <source type={mimeType} srcSet={srcSetArray.join(", ")}/>;
-          })}
           <Image src={src} alt={alt} />
         </picture>
       </Anchor>
